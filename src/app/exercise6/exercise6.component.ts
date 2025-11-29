@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {timer} from 'rxjs';
+import {map, timer} from 'rxjs';
 
 @Component({
   selector: 'app-exercise6',
@@ -9,7 +9,6 @@ import {timer} from 'rxjs';
 export class Exercise6Component  {
 
   action$ = timer(2000);
-
 
 }
 

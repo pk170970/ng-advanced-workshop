@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable} from 'rxjs';
-import {Country, State} from './types';
-import {FormControl} from '@angular/forms';
-import {CountryService} from './country.service';
-import {map, withLatestFrom} from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { Country, State } from './types';
+import { FormControl } from '@angular/forms';
+import { CountryService } from './country.service';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-exercise4',
@@ -13,20 +13,35 @@ import {map, withLatestFrom} from 'rxjs/operators';
 export class Exercise4Component {
 
   countries$: Observable<Country[]>;
-  states$!: Observable<State[]>;
+  states$: Observable<State[]> = this.service.getStatesFor('');
   state!: State;
   countryControl = new FormControl<string>('');
+  stateControl = new FormControl<string>({ value: '', disabled: true });
 
   constructor(private service: CountryService) {
-    this.countries$ = this.countryControl.valueChanges.pipe(
-      withLatestFrom(this.service.getCountries()),
-      map(([userInput, countries]) =>
-        countries.filter(c => c.description.toLowerCase().indexOf((userInput ?? "").toLowerCase()) !== -1))
+    this.countries$ = combineLatest([
+      this.service.getCountries(),
+      this.countryControl.valueChanges.pipe(
+        startWith('')
+      )
+    ]).pipe(
+      map(([countries, countryInput]) => countries.filter(c => c.description.toLowerCase().indexOf((countryInput ?? "").toLowerCase()) !== -1))
     );
   }
 
   updateStates(country: Country) {
     this.countryControl.setValue(country.description);
-    this.states$ = this.service.getStatesFor(country.id);
+    this.stateControl.enable();
+
+    this.states$ = combineLatest([
+      this.service.getStatesFor(country.id),
+      this.stateControl.valueChanges.pipe(
+        startWith('')
+      ),
+    ]).pipe(
+      map(([states, stateInput]) => {
+        return states.filter(state => state.description.toLowerCase().indexOf(stateInput.toLowerCase() ?? "") !== -1)
+      })
+    );
   }
 }

@@ -11,6 +11,8 @@
 <h4>You can take a look at the expected result here: <a routerLink="/solution/2">http://localhost:4200/solution/2</a> </h4>
 <hr>
 <h2>Result</h2>
+
+
 <div *ngIf="countries$ | async as countries">
   <div>Select one of {{countries.length}} countries:</div>
   <select [formControl]="countryDropdown">
@@ -20,11 +22,11 @@
   </select>
   <div>Current value: {{countryDropdown.value}}</div>
 </div>
-<div>
-  <div>Select one of 0 states/provinces:</div>
-  <select #statesDropdown>
-    <option>
-      State or province
+<div *ngIf="states$ | async as states">
+  <div>Select one of {{states.length}} states/provinces:</div>
+  <select [formControl]="statesDropdown">
+    <option *ngFor="let state of states" [value]="state.code">
+      {{state.description}}
     </option>
   </select>
   <div>Current value: {{statesDropdown.value}}</div>

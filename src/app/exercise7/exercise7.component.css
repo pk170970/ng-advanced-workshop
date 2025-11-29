@@ -6,3 +6,15 @@ button {
   padding: 6px 21px;
   border: none;
 }
+
+button[loading] {
+  background-color: gold;
+}
+
+button[done] {
+  background-color: green;
+}
+
+button img {
+  width: 20px;
+}

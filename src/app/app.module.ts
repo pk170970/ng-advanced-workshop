@@ -24,13 +24,19 @@ import { Exercise6Component } from './exercise6/exercise6.component';
 import { Solution7Component } from './solution/solution7/solution7.component';
 import { StateButtonComponent } from './solution/solution7/state-button.component';
 import { Exercise7Component } from './exercise7/exercise7.component';
+import { HighlightPipe2 } from './exercise3/highlight.pipe';
+import { DropdownComponent } from './exercise5/dropdown/dropdown.component';
+import { StateButtonDirective2 } from './exercise6/state-button.directive';
+import { StateButtonComponent2 } from './exercise7/state-button/state-button.component';
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
     Exercise1Component, Solution1Component, Exercise2Component, Solution2Component, Exercise3Component, Solution3Component, HighlightPipe,
     Exercise4Component, Solution4Component, MainPageComponent, Exercise5Component, Solution5Component, AutofilterDropdownComponent,
-    Solution6Component, StateButtonDirective, Exercise6Component, Solution7Component, StateButtonComponent, Exercise7Component
+    Solution6Component, StateButtonDirective, Exercise6Component, Solution7Component, StateButtonComponent, Exercise7Component, HighlightPipe2, DropdownComponent,StateButtonDirective2,StateButtonComponent2
   ],
   imports: [
     BrowserModule,

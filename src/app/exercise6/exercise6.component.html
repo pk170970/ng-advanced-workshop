@@ -11,6 +11,6 @@
 <h4>You can take a look at the expected result here: <a routerLink="/solution/6">http://localhost:4200/solution/6</a> </h4>
 <hr>
 <h2>Result</h2>
-<button>Save</button>
+<button [action]="action$" textDone="Saved!">Save</button>
 <br> <br>
-<a href="javascript:none()">Save from a link</a>
+<a href="" [action]="action$" textDone="done!" textWhenWorking="Save from a link">Hello</a>

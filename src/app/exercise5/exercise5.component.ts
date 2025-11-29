@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import {combineLatest, Observable, of, Subject} from 'rxjs';
-import {Country, State} from './types';
+import {Country, State, CountryWithInput} from './types';
 import {FormControl} from '@angular/forms';
 import {CountryService} from './country.service';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {map, startWith, switchMap, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-exercise5',
@@ -13,30 +13,44 @@ import {map, switchMap, tap} from 'rxjs/operators';
 export class Exercise5Component {
 
   countries$: Observable<Country[]>;
-  currentCountry$ = new Subject<Country>();
+  currentCountry : Country;
   states$: Observable<State[]>;
-  statesForCountry$: Observable<State[]> =  of([]);
-  state: State;
-  countryControl = new FormControl('');
-  stateControl = new FormControl('');
+  
+  countryControl = new Subject<string>();
+  stateControl = new Subject<string>();
 
   constructor(private service: CountryService) {
-    this.countries$ = combineLatest([this.countryControl.valueChanges, this.service.getCountries()]).pipe(
+    this.countries$ = combineLatest([
+      this.countryControl.pipe(startWith('')),
+      this.service.getCountries()
+    ])
+    .pipe(
       map(([userInput, countries]) => countries.filter(c => c.description.toLowerCase().indexOf(userInput.toLowerCase()) !== -1))
     );
-    this.statesForCountry$ = this.currentCountry$.asObservable().pipe(
-      tap(console.log),
-      switchMap(cntry => this.service.getStatesFor(cntry.id))
-    );
-    this.states$ = combineLatest([this.stateControl.valueChanges, this.statesForCountry$]).pipe(
-      map(([userInput, states]) => states.filter(c => c.description.toLowerCase().indexOf(userInput.toLowerCase()) !== -1))
-    );
+
+    this.states$ = this.stateControl.pipe(
+      startWith(''),
+      switchMap(userInput => 
+        this.service.getStatesFor(this.currentCountry?.id).pipe(
+          tap(v => console.log("combineLatest(states) emitted:", userInput)),
+          map(states => states.filter(state => state.description.toLowerCase().includes(userInput.toLowerCase())))
+        )
+      )
+    )
   }
 
-  updateStates(country: Country) {
-    this.countryControl.setValue(country.description);
-    this.stateControl.setValue('');
-    this.currentCountry$.next(country);
+  countryInputChange(data:any){
+    console.log('in parent for country', data);
+    this.countryControl.next(data.input);
+    this.currentCountry = data.country;
+    this.stateControl.next('');
+  }
+
+  stateInputChange(data:any){
+    console.log('in parent for state', data);
+    if(data && data?.country){
+      this.stateControl.next(data?.stateInput);
+    }
   }
 
 }
